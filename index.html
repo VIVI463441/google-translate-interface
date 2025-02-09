@@ -52,17 +52,29 @@
       try {
         const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=auto|${targetLang}`);
         
+        // Vérification du statut de la réponse
         if (!response.ok) {
           throw new Error(`Erreur API: ${response.status}`);
         }
 
+        // Récupération des données JSON
         const data = await response.json();
-        if (data.responseData.translatedText) {
+
+        // Vérification de la réponse de l'API
+        console.log("Réponse de l'API:", data);
+
+        // Si la traduction est présente dans la réponse
+        if (data.responseData && data.responseData.translatedText) {
           document.getElementById('translated-text').value = data.responseData.translatedText;
         } else {
-          throw new Error("Pas de texte traduit reçu.");
+          throw new Error("Aucune traduction disponible.");
         }
 
       } catch (error) {
         console.error("Erreur de traduction:", error);
-        document.getElementById('translated-text').value = `Erreur lors de la traduction: ${error.message}. Veuillez réessayer plu
+        document.getElementById('translated-text').value = `Erreur lors de la traduction: ${error.message}. Veuillez réessayer plus tard.`;
+      }
+    }
+  </script>
+</body>
+</html>
