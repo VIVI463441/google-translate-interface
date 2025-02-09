@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traduction avec MyMemory</title>
+  <script src="https://cdn.jsdelivr.net/npm/franc-min@6.0.0"></script> <!-- Charger la bibliothèque Franc-min -->
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
     textarea { width: 80%; height: 100px; margin-top: 10px; }
@@ -49,8 +50,19 @@
         return;
       }
 
+      // Détecter la langue source
+      const detectedLang = franc(sourceText);
+      console.log("Langue détectée:", detectedLang);
+
+      // Si la langue n'est pas reconnue, utiliser "auto" (par défaut, cela peut ne pas toujours fonctionner)
+      if (detectedLang === 'und') {
+        alert("Impossible de détecter la langue source. Veuillez essayer un autre texte.");
+        return;
+      }
+
       try {
-        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=auto|${targetLang}`);
+        // Requête API avec langue source détectée
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=${detectedLang}|${targetLang}`);
         
         // Vérification du statut de la réponse
         if (!response.ok) {
