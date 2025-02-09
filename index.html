@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traduction avec LibreTranslate</title>
+  <title>Traduction avec MyMemory</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
     textarea { width: 80%; height: 100px; margin-top: 10px; }
@@ -12,13 +12,13 @@
   </style>
 </head>
 <body>
-  <h1>Traduction gratuite avec LibreTranslate</h1>
+  <h1>Traduction gratuite avec MyMemory</h1>
 
   <!-- Zone de texte pour entrer le texte à traduire -->
   <h2>Entrez le texte :</h2>
   <textarea id="source-text" placeholder="Entrez votre texte ici..."></textarea>
 
-  <!-- Sélecteur de langue source (optionnel si vous souhaitez spécifier une langue source) -->
+  <!-- Sélecteur de langue cible -->
   <br>
   <h2>Choisissez la langue cible :</h2>
   <select id="target-lang">
@@ -50,33 +50,19 @@
       }
 
       try {
-        const response = await fetch("https://translate.terraprint.io/translate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            q: sourceText,
-            source: "auto",  // La langue source est détectée automatiquement
-            target: targetLang,
-            format: "text"
-          })
-        });
-
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sourceText)}&langpair=auto|${targetLang}`);
+        
         if (!response.ok) {
           throw new Error(`Erreur API: ${response.status}`);
         }
 
         const data = await response.json();
-        if (data.translatedText) {
-          document.getElementById('translated-text').value = data.translatedText;
+        if (data.responseData.translatedText) {
+          document.getElementById('translated-text').value = data.responseData.translatedText;
         } else {
           throw new Error("Pas de texte traduit reçu.");
         }
 
       } catch (error) {
         console.error("Erreur de traduction:", error);
-        document.getElementById('translated-text').value = "Erreur lors de la traduction. Veuillez réessayer plus tard.";
-      }
-    }
-  </script>
-</body>
-</html>
+        document.getElementById('translated-text').value = `Erreur lors de la traduction: ${error.message}. Veuillez réessayer plu
